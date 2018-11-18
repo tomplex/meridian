@@ -63,6 +63,8 @@ On Linux, you might be to run `ldconfig` afterwards to ensure that the `rtree` p
 
 Data takes up memory. Depending on the number & size of the geometries you're trying to work with, you might run out of memory. On my machine, a 2016 MacBook Pro, I found that a dataset with 350k records with an average of 6 nodes per polygon used ~500mb of memory footprint. YMMV. 
 
+`meridian` is opinionated and believes that data should be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `SpatialDataset` is more like a `frozenset` in behavior than a `list`. 
+
 
 # Planned features
 
