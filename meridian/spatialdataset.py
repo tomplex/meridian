@@ -111,19 +111,6 @@ class SpatialDataset:
 
         self.__rtree = rtree.Rtree(((idx, sd.bounds, None) for idx, sd in self.__data.items()), properties=properties)
 
-    def intersection(self, query):
-        """
-        Find the intersection of the input geometry / spatial data and the SpatialDataset.
-
-        Args:
-            query: an object which exposes a `bounds` property of the (xmin, ymin, xmax, ymax) format.
-
-        Returns:
-            generator of intersecting objects
-        """
-        _check_bounds(query)
-        return (self.__data[i] for i in self.__rtree.intersection(query.bounds))
-
     def intersects(self, query) -> bool:
         """
         Check if the SpatialDataset intersects with the query object.
@@ -136,6 +123,19 @@ class SpatialDataset:
         """
         _check_bounds(query)
         return self.__rtree.count(query.bounds) != 0
+
+    def intersection(self, query):
+        """
+        Find the intersection of the input geometry / spatial data and the SpatialDataset.
+
+        Args:
+            query: an object which exposes a `bounds` property of the (xmin, ymin, xmax, ymax) format.
+
+        Returns:
+            generator of intersecting objects
+        """
+        _check_bounds(query)
+        return (self.__data[i] for i in self.__rtree.intersection(query.bounds))
 
     def count(self, query) -> int:
         """
