@@ -43,6 +43,28 @@ def _check_bounds(query):
         raise AttributeError("Query argument to SpatialData methods must implement bounds property returning (xmin, ymin, xmax, ymax)")
 
 
+def spatialdata_to_geojson(spatialdata):
+    """
+    Helper function to convert a spatial data object back into GeoJSON. Mostly provided in the situation where a user
+    wishes to build up a new SpatialDataset with a subset of data from an existing one, or with processing added.
+
+    Args:
+        spatialdata: a `meridian` spatialdata namedtuple
+
+    Returns:
+        dict - GeoJSON representation of the spatialdata object
+
+    """
+    d = spatialdata._asdict()
+    del d['bounds']
+    return {
+        'type': 'Feature',
+        'id': d.pop('id'),
+        'geometry': d.pop('geom').__geo_interface__,
+        'properties': {**d}
+    }
+
+
 class SpatialDataset:
     """
     The SpatialDataset is the core piece of the library. It wraps spatial data and exposes methods to manage it.
