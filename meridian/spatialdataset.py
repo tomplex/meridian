@@ -58,10 +58,16 @@ class SpatialDataset:
         self.__load(data, properties)
 
     def __getitem__(self, item):
-        return self.__data[item]
+        try:
+            return self.__data[item]
+        except KeyError:
+            raise IndexError("Index {} out of range".format(item))
 
     def __len__(self):
         return len(self.__data)
+
+    def __iter__(self):
+        return iter(self.__data.values())
 
     @property
     def bounds(self):
