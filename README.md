@@ -8,9 +8,9 @@ Higher-level geospatial data abstractions for Python.
 
 # Usage
 
-The core data structure implemented is the `SpatialDataset`, which takes an iterable (`list`, `generator`, etc) of [geojson](http://geojson.org/)-structured `dict`s and builds up the dataset and index. The records in your dataset are stored within the `SpatialDataset` as `namedtuples` with all the input field names as attributes. Once it's done loading, you have a familiar-feeling data structure you can use to query your dataset.
+The core data structure implemented is the `SpatialDataset`, which takes an iterable (`list`, `generator`, etc) of [GeoJSON](http://geojson.org/)-structured `dict`s and builds up the dataset and index. The records in your dataset are stored within the `SpatialDataset` as `namedtuples` with all the input field names as attributes. Once it's done loading, you have a familiar-feeling data structure you can use to query your dataset.
 
-`meridian` is fully compatible with the geojson-like objects produced by the `fiona` library, which makes it very easy to use:
+`meridian` is fully compatible with the GeoJSON-like objects produced by the `fiona` library, which makes it very easy to use:
 
 ```python
 import fiona
@@ -62,6 +62,6 @@ On Linux, you might be to run `ldconfig` afterwards to ensure that the `rtree` p
 
 # Planned features
 
-    - Format compat. Built-in tools to help load data from other formats (Postgres, WKT, etc)
-    - Helper function for common geospatial comparisons between `spatialdata` objects
+- Format compat. Built-in tools to help load data from other formats (Postgres, WKT, etc)
+- Helper function for common geospatial comparisons between `spatialdata` objects
     
