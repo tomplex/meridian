@@ -1,5 +1,7 @@
 # meridian
 
+[![PyPI version](https://badge.fury.io/py/meridian.svg)](https://badge.fury.io/py/meridian)
+
 Higher-level geospatial data abstractions for Python.
 
 
