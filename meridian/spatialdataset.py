@@ -57,12 +57,6 @@ class SpatialDataset:
 
         self.__load(data, properties)
 
-    def __getitem__(self, item):
-        try:
-            return self.__data[item]
-        except KeyError:
-            raise IndexError("Index {} out of range".format(item))
-
     def __len__(self):
         return len(self.__data)
 
@@ -106,7 +100,7 @@ class SpatialDataset:
             generator of intersecting objects
         """
         _check_bounds(query)
-        return (self[i] for i in self.__rtree.intersection(query.bounds))
+        return (self.__data[i] for i in self.__rtree.intersection(query.bounds))
 
     def intersects(self, query) -> bool:
         """
