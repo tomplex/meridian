@@ -78,7 +78,7 @@ class SpatialDataset:
             if not factory:
                 factory = _get_namedtuple_factory(geojson)
 
-            record = factory(geojson)
+            record = factory(geojson, idx)
             self.__data[idx] = record
 
         if not properties:
