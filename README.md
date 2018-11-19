@@ -29,6 +29,16 @@ poi = geometry.shape({
     'coordinates': [-72.319261, 43.648956]
 })
 
+# Check if your poi intersects with the dataset
+print(dataset.intersects(poi)) # True
+
+# See how many records intersect
+print(dataset.count(poi)) # 1
+
+# Find the n nearest records to the query geometry
+print(dataset.nearest(poi, 3))
+
+# iterate through all intersecting records
 for record in dataset.intersection(poi):
     print(record)
 
@@ -70,6 +80,7 @@ Data takes up memory. Depending on the number & size of the geometries you're tr
 
 # Planned features
 
+- In-depth docs and 
 - Format compat. Built-in tools to help load data from other formats (Postgres, WKT, etc)
 - Helper function for common geospatial comparisons between `spatialdata` objects
     
