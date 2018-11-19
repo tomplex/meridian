@@ -65,6 +65,19 @@ Since the `id` field is not part of the GeoJSON spec it is optional to include; 
 
 # Installation
 
+From `pypi`:
+
+    pip install meridian
+
+Or, clone the repo and run
+
+    python path/to/repo/setup.py install
+
+You can also use `pip` to install directly from the github repo:
+
+    pip install git+git://github.com/tomplex/meridian.git
+
+
 `meridian` requires GEOS (for the `shapely` library) and [`libspatialindex`](https://libspatialindex.github.io/) to create the spatial index used for querying. On most systems, `libspatialindex` must be compiled from source. These instructions should work on Linux & macOS:
 
 ```bash
