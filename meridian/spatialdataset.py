@@ -159,7 +159,7 @@ class SpatialDataset:
             num_results:
 
         Returns:
-
+            Generator of nearest spatialdata records
         """
         _check_bounds(query)
-        return self.__rtree.nearest(query.bounds, num_results)
+        return (self.__data[i] for i in self.__rtree.nearest(query.bounds, num_results))
