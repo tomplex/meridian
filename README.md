@@ -87,6 +87,8 @@ cd /tmp/spatialindex-src-1.8.5 && ./configure; make; make install
 
 On Linux, you might be to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
 
+If you use docker, there are images with all dependencies and the latest version of `meridian` pre-installed available on [docker hub](https://hub.docker.com/r/tomplex/meridian-base/).
+
 # Gotcha's
 
 Data takes up memory. Depending on the number & size of the geometries you're trying to work with, you might run out of memory. On my machine, a 2016 MacBook Pro, I found that a dataset with 350k records with an average of 6 nodes per polygon used ~500mb of memory footprint. YMMV. 
