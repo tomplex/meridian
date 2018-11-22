@@ -80,6 +80,8 @@ class UploadCommand(Command):
         os.system('git tag v{0}'.format(about['__version__']))
         os.system('git push --tags')
 
+        self.status("Cleaning up...")
+        os.system('rm -rf meridian.egg-info dist build')
         sys.exit()
 
 
