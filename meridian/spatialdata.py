@@ -1,6 +1,7 @@
 import typing
 import sys as _sys
 import warnings
+from collections import OrderedDict
 
 from keyword import iskeyword as _iskeyword
 from shapely import geometry
