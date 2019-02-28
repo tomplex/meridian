@@ -8,24 +8,24 @@ from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
 
+if sys.version_info < (3, 6, 0):
+    print("Sorry, meridian is only supported on Python3.6+.")
+    sys.exit(1)
+
+
 # Package meta-data.
 NAME = 'meridian'
 DESCRIPTION = 'Easy geospatial data processing.'
 URL = 'https://github.com/tomplex/meridian'
 EMAIL = 'carusot42@gmail.com'
 AUTHOR = 'Tom Caruso'
-REQUIRES_PYTHON = '>=3.5.0'
+REQUIRES_PYTHON = '>=3.6.0'
 VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
     'shapely>=1.6.4.post2', 'Rtree>=0.8.3'
 ]
-
-# The rest you shouldn't have to touch too much :)
-# ------------------------------------------------
-# Except, perhaps the License and Trove Classifiers!
-# If you do change the License, remember to change the Trove Classifier for that!
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -107,7 +107,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
     ],
     # $ setup.py publish support.
     cmdclass={
