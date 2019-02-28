@@ -2,20 +2,13 @@
 
 import pytest
 
-from meridian import SpatialDataset
-from meridian.spatialdata import _get_spatialdata_factory
+from shapely.geometry import shape
+
+from meridian import SpatialDataset, SpatialData
+
 
 from shapely import geometry
 
-
-_test_spatialdata = _get_spatialdata_factory({
-    'id': 0,
-    'geometry': {},
-    'properties': {
-        'field1': 'value1',
-        'field2': 'value2'
-    }
-})
 
 
 def make_spatialdata(geojson_geometry, feature_id=1, field1=None, field2=None):
@@ -23,14 +16,22 @@ def make_spatialdata(geojson_geometry, feature_id=1, field1=None, field2=None):
     Helper to create a spatialdata object given a geojson geometry and some other attributes.
 
     """
-    return _test_spatialdata({
-        'id': feature_id,
-        'geometry': geojson_geometry,
-        'properties': {
+    return SpatialData(
+        id=feature_id,
+        geom=shape(geojson_geometry),
+        properties={
             'field1': field1,
             'field2': field2
         }
-    }, 0)
+    )
+    # return _test_spatialdata({
+    #     'id': feature_id,
+    #     'geometry': geojson_geometry,
+    #     'properties': {
+    #         'field1': field1,
+    #         'field2': field2
+    #     }
+    # }, 0)
 
 
 def make_square(xmin=0, ymin=0, delta=1, as_geom=False):

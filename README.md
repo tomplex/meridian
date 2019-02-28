@@ -40,24 +40,45 @@ print(dataset.count(poi)) # 1
 # Find the n nearest records to the query geometry
 print(dataset.nearest(poi, 3))
 
-# iterate through all intersecting records
-# dataset.intersection returns a generator of spatialdata namedtuples
+# The dataset itself is iterable.
+for record in dataset:
+    print(record)
+
+# iterate through all records in the dataset which bbox-intersect with poi
+# dataset.intersection returns a list of spatialdata objects
 for record in dataset.intersection(poi):
     print(record)
 
+
 ```
 
-All of the spatial query methods on a `SpatialDataset` require only that the query object has a `bounds` property which returns a 4-tuple like `(xmin, ymin, xmax, ymax)`. As long as that exists, `meridian` is agnostic of query geometry implementation, however it does use `shapely` geometry on the backend for the records stored within.
+All of the spatial query methods on a `SpatialDataset` require only that the query object has a `bounds` property which returns a 4-tuple like `(xmin, ymin, xmax, ymax)`. As long as that exists, `meridian` is agnostic of query geometry implementation, however it does use `shapely` geometry under the hood for the records stored within.
 
-The records in a `SpatialDataset` are `spatialdata` `namedtuples` with three special properties:
+The records in a `SpatialDataset` are `SpatialData`s:
 
 ```python
+poi = geometry.shape({
+    'type': 'Point',
+    'coordinates': [-72.319261, 43.648956]
+})
 
 for record in dataset:
     print(record.id)  # The id in the `id` field of the input geojson
     print(record.geom)  # The `shapely` geometry representation of the record
     print(record.bounds)  # The bounds of the geometry
-    print(record.my_fancy_property)  # All other properties in the geojson feature will be exposed as attributes on the namedtuple
+    print(record.properties)  # a dict of all the `properties` in the initial geojson feature
+    print(record.my_fancy_property)  # All individual properties in the geojson feature will be exposed as attributes on the namedtuple
+    
+    # SpatialData objects are fully compatible with all of the objects & operations defined in the shapely package.
+    print(record.intersects(poi))
+    print(poi.intersects(record))
+
+# Even advanced operations like cascaded union work as expected.
+from shapely.ops import cascaded_union
+
+unioned = cascaded_union(dataset)
+print(unioned.wkt)
+
 ```
 
 Since the `id` field is not part of the GeoJSON spec it is optional to include; the library will function just fine without it. However, it does give the user a means to uniquely identify the records within each dataset.
@@ -98,7 +119,6 @@ Data takes up memory. Depending on the number & size of the geometries you're tr
 
 # Planned features
 
-- In-depth docs and 
+- In-depth docs and usage examples
 - Format compat. Built-in tools to help load data from other formats (Postgres, WKT, etc)
-- Helper function for common geospatial comparisons between `spatialdata` objects
     

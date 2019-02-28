@@ -1,6 +1,5 @@
-from meridian.spatialdataset import SpatialDataset
-from meridian.spatialdata import spatialdata_to_geojson
+from meridian.spatialdataset import SpatialDataset, SpatialData
 
 __all__ = [
-    'SpatialDataset'
+    'SpatialDataset', 'SpatialData'
 ]
