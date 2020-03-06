@@ -1,3 +1,5 @@
+import itertools
+
 import rtree
 import typing
 
@@ -11,16 +13,15 @@ def _check_bounds(query):
 
 
 class SpatialData(typing.NamedTuple):
-    id: int = None
     geom: BaseGeometry = None
     properties: dict = None
 
     @property
     def _geom(self):
         """
-        Adding _geom as a property allows a spatialdata to interact seamlessly with shapely geometries. All methods on geometries
-        use the _geom property to access the underlying C objects pointer, so exposing it this way makes shapely think
-        its simply acting on another geometry object.
+        Adding _geom as a property allows a spatialdata to interact seamlessly with shapely geometries. All methods on
+        geometries use the _geom property to access the underlying C objects pointer, so exposing it this way makes
+        shapely think it's simply acting on another geometry object.
         """
         return self.geom._geom
 
@@ -28,7 +29,6 @@ class SpatialData(typing.NamedTuple):
     def __geo_interface__(self):
         return {
             'type': 'Feature',
-            'id': self.id,
             'geometry': self.geom.__geo_interface__,
             'properties': self.properties
         }
@@ -68,35 +68,42 @@ class SpatialDataset:
 
     """
 
-    def __init__(self, data: typing.Iterable):
-        self.__data = dict()
-        self.__rtree: rtree.Rtree = None
+    def __init__(self, data: typing.Union[typing.Sequence, typing.Iterable], properties: rtree.index.Property = None):
+        if hasattr(data, '__next__'):
+            # It's a generator / iterator
+            first = next(data)
+            # reconstruct our initial iterator by chaining the first item with the
+            # rest of the iterator
+            data = itertools.chain(iter([first]), data)
+        else:
+            # it's a sequence
+            first = data[0]
 
-        self.__load(data)
+        if isinstance(first, SpatialData):
+            self.__data = tuple(data)
+        else:
+            self.__data = tuple(SpatialData(
+                geom=shape(geojson.get('geometry')),
+                properties=geojson.get('properties', {})
+            ) for geojson in data)
+
+        if properties is None:
+            properties = rtree.index.Property()
+            properties.dimension = 2
+            properties.fill_factor = 0.999
+            properties.leaf_capacity = 1000
+
+        gen = ((idx, sd.bounds, None) for idx, sd in enumerate(self.__data))
+        self.__rtree = rtree.Rtree(gen, properties=properties)
 
     def __len__(self):
         return len(self.__data)
 
     def __iter__(self):
-        return iter(self.__data.values())
+        return iter(self.__data)
 
-    def __load(self, data_stream):
-        for idx, geojson in enumerate(data_stream):
-
-            record = SpatialData(
-                id=geojson.get('id') or idx,
-                geom=shape(geojson.get('geometry')),
-                properties=geojson.get('properties', {})
-
-            )
-            self.__data[idx] = record
-
-        properties = rtree.index.Property()
-        properties.dimension = 2
-        properties.leaf_capacity = 1000
-        properties.fill_factor = 0.9
-
-        self.__rtree = rtree.Rtree(((idx, sd.bounds, None) for idx, sd in self.__data.items()), properties=properties)
+    def __getitem__(self, item):
+        return self.__data[item]
 
     @property
     def bounds(self):
@@ -128,10 +135,10 @@ class SpatialDataset:
             query: an object which exposes a `bounds` property of the (xmin, ymin, xmax, ymax) format.
 
         Returns:
-            generator of intersecting objects
+            SpatialDataset of intersecting objects
         """
         _check_bounds(query)
-        return list(self.__data[i] for i in self.__rtree.intersection(query.bounds))
+        return SpatialDataset(self.__data[i] for i in self.__rtree.intersection(query.bounds))
 
     def count(self, query) -> int:
         """
@@ -155,7 +162,7 @@ class SpatialDataset:
             num_results:
 
         Returns:
-            Generator of nearest spatialdata records
+            SpatialDataset of nearest spatialdata records
         """
         _check_bounds(query)
-        return list(self.__data[i] for i in self.__rtree.nearest(query.bounds, num_results))
+        return SpatialDataset(self.__data[i] for i in self.__rtree.nearest(query.bounds, num_results))
