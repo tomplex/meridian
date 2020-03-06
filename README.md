@@ -88,6 +88,15 @@ Since the `id` field is not part of the GeoJSON spec it is optional to include; 
 
 # Installation
 
+`meridian` requires GEOS (for the `shapely` library) and [`libspatialindex`](https://libspatialindex.github.io/) to create the spatial index used for querying. On most systems, `libspatialindex` must be compiled from source. These instructions should work on Linux & macOS:
+
+```bash
+wget -qO- http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.gz | tar xz -C /tmp
+cd /tmp/spatialindex-src-1.8.5 && ./configure; make; make install
+```
+
+On Linux, you might need to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
+
 From `pypi`:
 
     pip install meridian
@@ -100,15 +109,6 @@ You can also use `pip` to install directly from the github repo:
 
     pip install git+git://github.com/tomplex/meridian.git
 
-
-`meridian` requires GEOS (for the `shapely` library) and [`libspatialindex`](https://libspatialindex.github.io/) to create the spatial index used for querying. On most systems, `libspatialindex` must be compiled from source. These instructions should work on Linux & macOS:
-
-```bash
-wget -qO- http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.gz | tar xz -C /tmp
-cd /tmp/spatialindex-src-1.8.5 && ./configure; make; make install
-```
-
-On Linux, you might need to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
 
 If you use docker, there are images with all dependencies and the latest version of `meridian` pre-installed available on [docker hub](https://hub.docker.com/r/tomplex/meridian-base/).
 
