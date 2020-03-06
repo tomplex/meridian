@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
 
 RUN apk update && \
     apk add wget build-base && \
@@ -7,7 +7,8 @@ RUN apk update && \
 RUN wget -qO- http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.gz | tar xz -C /tmp && \
         cd /tmp/spatialindex-src-1.8.5 && \
         ./configure && \
-        make && make install && \
+        make && \
+        make install && \
         cd /tmp && \
         rm -rf spatialindex-src-1.8.5
 
