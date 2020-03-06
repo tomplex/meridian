@@ -16,14 +16,14 @@ def test_count(spatial_dataset):
 
 def test_nearest(spatial_dataset):
     pt = make_point(0.5, 0.5, as_geom=True)
-    near = list(spatial_dataset.nearest(pt))
+    near = spatial_dataset.nearest(pt)
 
     assert near[0].id == 1
 
 
 def test_intersection(spatial_dataset):
     pt = make_point(1, 1, as_geom=True)
-    records = list(spatial_dataset.intersection(pt))
+    records = spatial_dataset.intersection(pt)
 
     assert len(records) == 4
 
@@ -42,5 +42,5 @@ def test_iter(spatial_dataset):
     for _ in iterator:
         i += 1
 
-    assert i == 4
+    assert i == len(spatial_dataset)
 

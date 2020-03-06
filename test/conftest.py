@@ -24,14 +24,6 @@ def make_spatialdata(geojson_geometry, feature_id=1, field1=None, field2=None):
             'field2': field2
         }
     )
-    # return _test_spatialdata({
-    #     'id': feature_id,
-    #     'geometry': geojson_geometry,
-    #     'properties': {
-    #         'field1': field1,
-    #         'field2': field2
-    #     }
-    # }, 0)
 
 
 def make_square(xmin=0, ymin=0, delta=1, as_geom=False):
