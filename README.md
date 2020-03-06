@@ -45,16 +45,15 @@ for record in dataset:
     print(record)
 
 # iterate through all records in the dataset which bbox-intersect with poi
-# dataset.intersection returns a list of spatialdata objects
+# dataset.intersection returns a new SpatialDataset.
 for record in dataset.intersection(poi):
     print(record)
-
 
 ```
 
 All of the spatial query methods on a `SpatialDataset` require only that the query object has a `bounds` property which returns a 4-tuple like `(xmin, ymin, xmax, ymax)`. As long as that exists, `meridian` is agnostic of query geometry implementation, however it does use `shapely` geometry under the hood for the records stored within.
 
-The records in a `SpatialDataset` are `SpatialData`s:
+The records in a `SpatialDataset` are `SpatialData`:
 
 ```python
 poi = geometry.shape({
@@ -73,10 +72,13 @@ for record in dataset:
     print(record.intersects(poi))
     print(poi.intersects(record))
 
+
 # Even advanced operations like cascaded union work as expected.
 from shapely.ops import cascaded_union
 
-unioned = cascaded_union(dataset)
+subset = dataset.intersection(poi)
+
+unioned = cascaded_union(subset)
 print(unioned.wkt)
 
 ```
@@ -106,7 +108,7 @@ wget -qO- http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.g
 cd /tmp/spatialindex-src-1.8.5 && ./configure; make; make install
 ```
 
-On Linux, you might be to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
+On Linux, you might need to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
 
 If you use docker, there are images with all dependencies and the latest version of `meridian` pre-installed available on [docker hub](https://hub.docker.com/r/tomplex/meridian-base/).
 
@@ -114,7 +116,7 @@ If you use docker, there are images with all dependencies and the latest version
 
 Data takes up memory. Depending on the number & size of the geometries you're trying to work with, you might run out of memory. On my machine, a 2016 MacBook Pro, I found that a dataset with 350k records with an average of 6 nodes per polygon used ~500mb of memory footprint. YMMV. 
 
-`meridian` is opinionated and believes that data should be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `SpatialDataset` is more like a `frozenset` in behavior than a `list`. 
+`meridian` is opinionated and believes that data should generally be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `SpatialDataset` is more like a `frozenset` in behavior than a `list`. 
 
 
 # Planned features
