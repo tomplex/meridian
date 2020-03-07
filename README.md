@@ -4,15 +4,17 @@
 
 Higher-level geospatial data abstractions for Python.
 
-
-`meridian` lets you treat your geospatial dataset like you would a normal Python data structure, backed by a spatial index for high-performance geospatial queries.
+`meridian` lets you treat your geospatial dataset like you would a normal Python data structure, backed with a spatial index 
+for high-performance geospatial queries. All data is stored in NamedTuples, which makes it very memory-efficient. The same 
+dataset loaded in meridian can use up to half as much memory as the same dataset in GeoPandas, depending on the characteristics
+of the geometry. 
 
 
 # Usage
 
 The core data structure implemented is the `SpatialDataset`, which takes an iterable (`list`, `generator`, etc) of [GeoJSON](http://geojson.org/)-structured `dict`s and builds up the dataset and index. The records in your dataset are stored within the `SpatialDataset` as `SpatialData` objects, with all the key/value pairs in the GeoJSON's `properties` as attributes. Once it's done loading, you have a familiar-feeling data structure you can use to query your dataset.
 
-`meridian` is fully compatible with the GeoJSON-like objects produced by the `fiona` library, which makes it very easy to get started:
+`meridian` is fully compatible with the GeoJSON-like objects produced by the `fiona` library, which makes it very easy to get started using any format supported by `fiona` & GDAL:
 
 ```python
 import fiona
@@ -45,7 +47,7 @@ for record in dataset:
     print(record)
 
 # iterate through all records in the dataset which bbox-intersect with poi
-# dataset.intersection returns a new SpatialDataset.
+# dataset.intersection returns a list of SpatialData.
 for record in dataset.intersection(poi):
     print(record)
 
@@ -112,12 +114,9 @@ You can also use `pip` to install directly from the github repo:
 
 If you use docker, there are images with all dependencies and the latest version of `meridian` pre-installed available on [docker hub](https://hub.docker.com/r/tomplex/meridian-base/).
 
-# Gotcha's
-
-Data takes up memory. Depending on the number & size of the geometries you're trying to work with, you might run out of memory. On my machine, a 2016 MacBook Pro, I found that a dataset with 350k records with an average of 6 nodes per polygon used ~500mb of memory footprint. YMMV. 
+# Opinions
 
 `meridian` is opinionated and believes that data should generally be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `SpatialDataset` is more like a `frozenset` in behavior than a `list`. 
-
 
 # Planned features
 
