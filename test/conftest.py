@@ -1,4 +1,4 @@
-
+import typing
 
 import pytest
 
@@ -10,6 +10,10 @@ from meridian import SpatialDataset, SpatialData
 from shapely import geometry
 
 
+class properties(typing.NamedTuple):
+    field1: str
+    field2: str
+
 
 def make_spatialdata(geojson_geometry, feature_id=1, field1=None, field2=None):
     """
@@ -17,12 +21,11 @@ def make_spatialdata(geojson_geometry, feature_id=1, field1=None, field2=None):
 
     """
     return SpatialData(
-        id=feature_id,
         geom=shape(geojson_geometry),
-        properties={
+        properties=properties(**{
             'field1': field1,
             'field2': field2
-        }
+        })
     )
 
 
@@ -81,10 +84,10 @@ def spatial_dataset():
             records.append({
                 'type': 'Feature',
                 'geometry': make_square(x, y),
-                'id': i,
                 'properties': {
                     'field1': None,
-                    'field2': None
+                    'field2': None,
+                    'id': i
                 }
             })
 

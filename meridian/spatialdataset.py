@@ -14,7 +14,7 @@ def _check_bounds(query):
 
 class SpatialData(typing.NamedTuple):
     geom: BaseGeometry = None
-    properties: dict = None
+    properties: typing.NamedTuple = None
 
     @property
     def _geom(self):
@@ -30,11 +30,11 @@ class SpatialData(typing.NamedTuple):
         return {
             'type': 'Feature',
             'geometry': self.geom.__geo_interface__,
-            'properties': self.properties
+            'properties': self.properties._asdict()
         }
 
     def __getattr__(self, item):
-        return self.properties[item]
+        return getattr(self.properties, item)
 
     @property
     def type(self):
@@ -82,9 +82,18 @@ class SpatialDataset:
         if isinstance(first, SpatialData):
             self.__data = tuple(data)
         else:
+            fields = [(name, type(value)) for name, value in first['properties'].items()]
+            record_properties = typing.NamedTuple('properties', fields)
+
+            def make_properties(geojson):
+                props = geojson.get('properties', {})
+                if props:
+                    return record_properties(**props)
+                return None
+
             self.__data = tuple(SpatialData(
                 geom=shape(geojson.get('geometry')),
-                properties=geojson.get('properties', {})
+                properties=make_properties(geojson)
             ) for geojson in data)
 
         if properties is None:
