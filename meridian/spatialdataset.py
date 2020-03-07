@@ -61,6 +61,9 @@ class SpatialData(typing.NamedTuple):
     def contains(self, other):
         return self.geom.contains(other)
 
+    def todict(self):
+        return {**self.properties._asdict(), 'wkt': self.geom.wkt}
+
 
 class SpatialDataset:
     """
@@ -147,7 +150,7 @@ class SpatialDataset:
             SpatialDataset of intersecting objects
         """
         _check_bounds(query)
-        return SpatialDataset(self.__data[i] for i in self.__rtree.intersection(query.bounds))
+        return tuple(self.__data[i] for i in self.__rtree.intersection(query.bounds))
 
     def count(self, query) -> int:
         """
@@ -174,4 +177,4 @@ class SpatialDataset:
             SpatialDataset of nearest spatialdata records
         """
         _check_bounds(query)
-        return SpatialDataset(self.__data[i] for i in self.__rtree.nearest(query.bounds, num_results))
+        return tuple(self.__data[i] for i in self.__rtree.nearest(query.bounds, num_results))
