@@ -17,11 +17,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+import pathlib
 
 from collections import OrderedDict
 from operator import itemgetter
-from typing import Iterable
 
 import fiona
 
@@ -53,7 +52,7 @@ class Record(tuple):
             setattr(cls, anno, property(itemgetter(idx + 1)))
 
     @classmethod
-    def load_from(cls, path: str = None, geojson: Iterable[dict] = None) -> "Dataset":
+    def load_from(cls, src, **kwargs) -> "Dataset":
         """
         Create a Dataset of the implemented model from a source, either
         a fiona-readable data file or iterable of geojson.
@@ -67,11 +66,11 @@ class Record(tuple):
         """
         from meridian import Dataset
 
-        if path and os.path.exists(path):
-            with fiona.open(path) as src:
-                return Dataset((cls.from_geojson(record) for record in src))
-        elif geojson:
-            return Dataset((cls.from_geojson(gj) for gj in geojson))
+        if isinstance(src, list) or hasattr(src, '__next__'):
+            return Dataset((cls.from_geojson(gj) for gj in src))
+        elif isinstance(src, (str, pathlib.Path)) and pathlib.Path(src).exists():
+            with fiona.open(src, **kwargs) as collection:
+                return Dataset((cls.from_geojson(record) for record in collection))
         else:
             raise Exception("One of path or geojson must be specified")
 

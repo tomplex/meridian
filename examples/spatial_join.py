@@ -39,8 +39,8 @@ def main():
     states: Dataset[State] = State.load_from(path=states_data)
 
     # Use the intersection function to get intersecting records between the two Datasets
-    for power_plant, state in meridian.intersection(power_plants, states):
-        print("Power plant", power_plant.plant_name, "is in", state.name)
+    # for power_plant, state in meridian.intersection(power_plants, states):
+    #     print("Power plant", power_plant.plant_name, "is in", state.name)
 
     # Because intersection returns an iterator of tuples, it's fully
     # interoperable with many standard library tools.
