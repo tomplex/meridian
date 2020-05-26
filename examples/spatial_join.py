@@ -34,9 +34,9 @@ def main():
     """
 
     # SpatialData models include a method to create a Dataset of that type from a file.
-    power_plants: Dataset[PowerPlant] = PowerPlant.load_from(path=power_plants_data)
+    power_plants: Dataset[PowerPlant] = PowerPlant.load_from(power_plants_data)
 
-    states: Dataset[State] = State.load_from(path=states_data)
+    states: Dataset[State] = State.load_from(states_data)
 
     # Use the intersection function to get intersecting records between the two Datasets
     # for power_plant, state in meridian.intersection(power_plants, states):
