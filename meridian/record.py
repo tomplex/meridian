@@ -58,8 +58,10 @@ class Record(tuple):
         a fiona-readable data file or iterable of geojson.
 
         Args:
-            path: a path to a fiona-readable file.
-            geojson: an iterable of geojson-like dictionaries
+            src: a path to a fiona-readable file or an
+                 iterable of geojson-like dictionaries
+            kwargs:
+                passed directly to kwargs of fiona.open()
 
         Returns:
             A Dataset containing the items specified.
