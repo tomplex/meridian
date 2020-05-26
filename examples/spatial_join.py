@@ -1,13 +1,12 @@
 import itertools
 
 import meridian
-from meridian import Dataset, Record
 
 from examples.data import states_data, power_plants_data
 
 
 # Define our data model for the power plant dataset
-class PowerPlant(Record):
+class PowerPlant(meridian.Record):
     fid: int
     plant_code: int
     plant_name: str
@@ -21,7 +20,7 @@ class PowerPlant(Record):
 # Note that the state geojson has more attributes than
 # listed here; we will only load the attributes
 # specified in the model's annotations.
-class State(Record):
+class State(meridian.Record):
     statefp: str
     stusps: str
     name: str
@@ -34,13 +33,13 @@ def main():
     """
 
     # SpatialData models include a method to create a Dataset of that type from a file.
-    power_plants: Dataset[PowerPlant] = PowerPlant.load_from(power_plants_data)
+    power_plants: meridian.Dataset[PowerPlant] = PowerPlant.load_from(power_plants_data)
 
-    states: Dataset[State] = State.load_from(states_data)
+    states: meridian.Dataset[State] = State.load_from(states_data)
 
     # Use the intersection function to get intersecting records between the two Datasets
-    # for power_plant, state in meridian.intersection(power_plants, states):
-    #     print("Power plant", power_plant.plant_name, "is in", state.name)
+    for power_plant, state in meridian.intersection(power_plants, states):
+        print("Power plant", power_plant.plant_name, "is in", state.name)
 
     # Because intersection returns an iterator of tuples, it's fully
     # interoperable with many standard library tools.
