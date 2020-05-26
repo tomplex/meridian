@@ -1,3 +1,6 @@
 .idea
 .pyc
-example.py
+examples/benchmark.py
+.tox
+.pytest_cache
+.coverage
