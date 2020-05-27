@@ -4,3 +4,4 @@ coverage
 black
 mypy
 flake8
+sphinx

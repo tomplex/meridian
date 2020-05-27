@@ -1,3 +1,5 @@
+.PHONY:
+
 black:
 	python -m black meridian/
 
@@ -12,6 +14,9 @@ tox:
 
 clean:
 	rm -r .coverage meridian.egg-info .pytest_cache .mypy_cache .tox
+
+docs: .PHONY
+	sphinx-build -b html docs/ docs/_build/html
 
 publish: clean tox black
 	python setup.py upload

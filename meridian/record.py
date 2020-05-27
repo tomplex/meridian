@@ -82,7 +82,7 @@ class Record(Tuple[Any]):
             return Dataset((cls.from_geojson(gj) for gj in src))
         elif isinstance(src, (str, pathlib.Path)) and pathlib.Path(src).exists():
             with fiona.open(src, **kwargs) as collection:
-                return Dataset((cls.from_geojson(record) for record in collection))
+                return Dataset((cls.from_geojson(record) for record in collection if record['geometry']))
         else:
             raise Exception("One of path or geojson must be specified")
 
