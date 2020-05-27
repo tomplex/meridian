@@ -21,22 +21,15 @@ _allowed_prepared_predicates = (
 
 
 def product(
-    left: Dataset[_T], right: Dataset[_U], predicate: str = "intersects"
+    d1: Dataset[_T], d2: Dataset[_U], predicate: str = "intersects"
 ) -> Iterator[Tuple[_T, _U]]:
     """
-    product is returns an iterator of SpatialData tuples which fulfill the chosen predicate.
+    product is returns an iterator of Record tuples which fulfill the chosen predicate.
     Behavior is similar to itertools.product, except that it is not a full cartestian product;
-    The tuples first item will match the "left" SpatialDataset's type, and the second will
-    match the right.
+    The tuples first item will match the first Dataset's Record type, and the second will
+    match the second.
 
     the outer loop's geometry is prepared so predicates will be efficient.
-
-    Args:
-        left:
-        right:
-        predicate:
-
-    Returns:
 
     """
     if predicate not in _allowed_prepared_predicates:
@@ -44,8 +37,8 @@ def product(
             f"Predicate must be one of {','.join(_allowed_prepared_predicates)}"
         )
 
-    for r1 in left:
-        records = right.intersection(r1)
+    for r1 in d1:
+        records = d2.intersection(r1)
         if not records:
             continue
 
@@ -55,14 +48,9 @@ def product(
                 yield r1, r2
 
 
-def intersection(left: Dataset[_T], right: Dataset[_U]) -> Iterator[Tuple[_T, _U]]:
+def intersection(d1: Dataset[_T], d2: Dataset[_U]) -> Iterator[Tuple[_T, _U]]:
     """
-
-    Args:
-        left:
-        right:
-
-    Returns:
+    A special case of `product` based on the "intersects" predicate.
 
     """
-    yield from product(left, right, predicate="intersects")
+    yield from product(d1, d2, predicate="intersects")

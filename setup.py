@@ -23,7 +23,7 @@ REQUIRES_PYTHON = ">=3.6.0"
 VERSION = None
 
 # What packages are required for this module to be executed?
-REQUIRED = ["shapely>=1.6.4.post2", "Rtree>=0.8.3"]
+REQUIRED = ["Shapely>=1.7.0", "Rtree>=0.8.3", "Fiona>=1.8"]
 
 here = os.path.abspath(os.path.dirname(__file__))
 

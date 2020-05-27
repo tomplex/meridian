@@ -40,12 +40,6 @@ def test_geo_interface(record):
     assert gi.get('geometry').get('coordinates') == (((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)),)
 
 
-def test_intersects(record):
-    pt = make_point(0.5, 0.5, as_geom=True)
-    assert record.intersects(pt)
-    assert pt.intersects(record)
-
-
 def test_geojson(record):
     assert record.geojson == {'geometry': {'coordinates': (((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)),), 'type': 'Polygon'}, 'properties': OrderedDict([('id', 1), ('field1', None), ('field2', "default")]), 'type': 'Feature'}
 

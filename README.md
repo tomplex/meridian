@@ -90,7 +90,7 @@ class County(meridian.Record):
     
 ``` 
 
-Supposing you had a shape file with province geometry and the fields above, you could create a `Dataset`
+Supposing you had a shape file with county geometry and the fields above, you could create a `Dataset`
 of `County`s like so:
 
 ```python
@@ -102,7 +102,7 @@ Wheels are available for many platforms, but not all.
 
 Creating a `Dataset` will immediately load the data into memory and create a spatial index
 which will be used for all queries. A `Dataset` has many attributes of other Python data structures:
-it is iterable, has a `len`, and 
+it is iterable, has a `len`, etc.
 
 
 ```python
@@ -148,7 +148,7 @@ for county in counties.intersection(poi):
 Please note that spatial methods check only for a bounding-box intersection; you must confirm that the 
 objects returned actually intersect with your input. 
 
-All of the spatial query methods on a `SpatialDataset` require only that the query object has a `bounds` 
+All of the spatial query methods on a `Dataset` require only that the query object has a `bounds` 
 property which returns a 4-tuple like `(xmin, ymin, xmax, ymax)`. As long as that exists, 
 `meridian` is agnostic of query geometry implementation, however it does use `shapely` geometry 
 under the hood for the records stored within.
@@ -164,7 +164,8 @@ for county in counties:
     print(county.bounds)  # The bounds of the geometry
     print(county.name) 
     
-    # Record objects are fully compatible with all of the objects & operations defined in the shapely package.
+    # Record objects are fully compatible with all of the
+    # objects & operations defined in the shapely package.
     print(poi.intersects(county))
 
 
@@ -216,4 +217,4 @@ If you use docker, there are images with all dependencies and the latest version
 
 # Opinions
 
-`meridian` is opinionated and believes that data should generally be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `SpatialDataset` is more like a `frozenset` in behavior than a `list`. 
+`meridian` is opinionated and believes that data should generally be immutable. If you need your data to change, you should create new data representing your input + processing instead of changing old data. Thus, a `Dataset` is more like a `frozenset` in behavior than a `list`. 

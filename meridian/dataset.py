@@ -33,11 +33,13 @@ T = TypeVar("T", bound=Record)
 
 
 class FastRTree(rtree.Rtree):
+    """A faster Rtree which uses a lower protocol when pickling objects for storage."""
     def dumps(self, obj):
         return pickle.dumps(obj, -1)
 
 
 def _check_bounds(query):
+    """Ensure the input object has a `bounds` attribute."""
     if not hasattr(query, "bounds"):
         raise AttributeError(
             "Query argument to must "
@@ -48,9 +50,8 @@ def _check_bounds(query):
 
 class Dataset(Generic[T]):
     """
-    The SpatialDataset is the core piece of meridian.
-    It wraps spatial data and exposes methods to manage it.
-
+    The Dataset provides a wrapper for Records, giving the user a way to query
+    the Records within spatially.
     """
 
     def __init__(
@@ -58,12 +59,6 @@ class Dataset(Generic[T]):
         data: typing.Union[typing.Sequence, typing.Iterable],
         properties: rtree.index.Property = None,
     ):
-        """
-
-        Args:
-            data:
-            properties:
-        """
         if hasattr(data, "__next__"):
             # It's an iterator
             first = next(data)
@@ -89,18 +84,21 @@ class Dataset(Generic[T]):
         self.__rtree = FastRTree(gen, properties=properties)
 
     def __len__(self):
+        """Number of Records in the Dataset"""
         return len(self.__data)
 
     def __iter__(self) -> Iterator[T]:
+        """Create an iterator over the Records in the dataset."""
         return iter(self.__data)
 
     def __getitem__(self, item: int) -> T:
+        """Get an item from the Dataset by index."""
         return self.__data[item]
 
     @property
     def bounds(self):
         """
-        The bounds of the SpatialDataset.
+        The bounds of the Dataset.
 
         Returns: 4-tuple (xmin, ymin, xmax, ymax)
         """

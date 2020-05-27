@@ -17,10 +17,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import collections
+import operator
 import pathlib
-
-from collections import OrderedDict
-from operator import itemgetter
+import typing
 
 import fiona
 
@@ -32,6 +32,15 @@ class Record(tuple):
     __slots__ = ()
 
     def __new__(cls, geom, *args, **kwargs):
+        """
+        Create a new Record. keyword arguments should be supplied which match the user-defined
+        annotation on the class.
+
+        Args:
+            geom: A shapely geometry object
+            *args:
+            **kwargs: keyword arguments with names matching the user-defined annotations.
+        """
         if cls.__annotations__:
             props = (
                 kwargs.get(attr) or cls._defaults[attr]
@@ -42,14 +51,14 @@ class Record(tuple):
 
     def __init_subclass__(cls, **kwargs):
         if not getattr(cls, "__annotations__", None):
-            cls.__annotations__ = OrderedDict()
+            cls.__annotations__ = collections.OrderedDict()
         else:
-            cls.__annotations__ = OrderedDict(cls.__annotations__)
+            cls.__annotations__ = collections.OrderedDict(cls.__annotations__)
 
         cls._defaults = {attr: getattr(cls, attr, None) for attr in cls.__annotations__}
 
         for idx, anno in enumerate(cls.__annotations__):
-            setattr(cls, anno, property(itemgetter(idx + 1)))
+            setattr(cls, anno, property(operator.itemgetter(idx + 1)))
 
     @classmethod
     def load_from(cls, src, **kwargs) -> "Dataset":
@@ -77,17 +86,27 @@ class Record(tuple):
             raise Exception("One of path or geojson must be specified")
 
     @classmethod
-    def from_geojson(cls, geojson):
+    def from_geojson(cls, geojson: dict):
+        """
+        Create a new Record from a geojson-like dict.
+
+        Args:
+            geojson:
+
+        Returns:
+            A new instance of the Record subclass.
+        """
         return cls.__new__(cls, shape(geojson["geometry"]), **geojson["properties"])
 
     @property
     def geom(self) -> BaseGeometry:
+        """The geometry of the Record."""
         return self[0]
 
     @property
     def _geom(self):
         """
-        Adding _geom as a property allows a spatialdata to interact seamlessly
+        Adding _geom as a property allows a Record to interact seamlessly
         with shapely geometries. All methods on geometries use the _geom
         property to access the underlying C geometry's pointer, so exposing
         it this way makes shapely think it's simply acting on another
@@ -97,21 +116,34 @@ class Record(tuple):
 
     @property
     def __geo_interface__(self):
+        """
+        https://gist.github.com/sgillies/2217756
+        """
         return {
             "type": "Feature",
             "geometry": self.geom.__geo_interface__,
-            "properties": OrderedDict(
+            "properties": collections.OrderedDict(
                 {anno: self[idx + 1] for idx, anno in enumerate(self.__annotations__)}
             ),
         }
 
     @property
     def bounds(self):
+        """
+        The bounds of the Record's geometry, as a tuple like
+        (xmin, ymin, xmax, ymax)
+
+        Returns:
+            4-tuple of float
+        """
         return self.geom.bounds
 
     @property
-    def geojson(self):
-        return self.__geo_interface__
+    def geojson(self) -> typing.Dict[str, typing.Any]:
+        """
+        Get the record as geojson
 
-    def intersects(self, other):
-        return self.geom.intersects(other)
+        Returns:
+
+        """
+        return self.__geo_interface__
