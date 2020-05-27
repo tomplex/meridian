@@ -47,7 +47,7 @@ class Record(Tuple[Any]):
                 kwargs.get(attr) or cls._defaults[attr]
                 for attr, typ in cls.__annotations__.items()
             )
-            return tuple.__new__(cls, (geom, *props))
+            return tuple.__new__(cls, (*props, geom))
         return tuple.__new__(cls, (geom,))
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
@@ -59,7 +59,10 @@ class Record(Tuple[Any]):
         cls._defaults = {attr: getattr(cls, attr, None) for attr in cls.__annotations__}
 
         for idx, anno in enumerate(cls.__annotations__):
-            setattr(cls, anno, property(operator.itemgetter(idx + 1)))
+            setattr(cls, anno, property(operator.itemgetter(idx)))
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{k}={v!r}' for k, v in self.items())})"
 
     @classmethod
     def load_from(cls, src: Any, **kwargs: Any) -> "Dataset":
@@ -102,7 +105,7 @@ class Record(Tuple[Any]):
     @property
     def geom(self) -> BaseGeometry:
         """The geometry of the Record."""
-        return self[0]
+        return self[-1]
 
     @property
     def _geom(self) -> Any:
@@ -124,7 +127,7 @@ class Record(Tuple[Any]):
             "type": "Feature",
             "geometry": self.geom.__geo_interface__,
             "properties": collections.OrderedDict(
-                {anno: self[idx + 1] for idx, anno in enumerate(self.__annotations__)}
+                {anno: self[idx] for idx, anno in enumerate(self.__annotations__)}
             ),
         }
 
@@ -148,3 +151,9 @@ class Record(Tuple[Any]):
 
         """
         return self.__geo_interface__
+
+    def items(self):
+        for idx, fieldname in enumerate(self.__annotations__):
+            yield fieldname, self[idx]
+
+        yield 'geom', self.geom

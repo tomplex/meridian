@@ -11,18 +11,6 @@ dataset in GeoPandas, depending on the characteristics of the geometry.
 
 ### Note: this library is still in alpha. The API and functionality will change often and without notice.
 
-## Design goals
-
-Some items which are important to me, in no particular order:
- - Pythonicity. should be interoperable with standard library tools and be intuitive to use.
- - Efficiency. Memory use is kept as low as possible and operations are optimized when appropriate.
- - Type hinting wherever possible.
- - Strong support for dataset attribution.
-
-
-Meridian's `Record` models draw strong inspiration from `pydantic`'s `BaseModel`, choosing to re-invent a small
-part of that wheel for the purpose of efficiency and narrowing of focus.
-
 
 ## Usage
 

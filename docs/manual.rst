@@ -54,4 +54,73 @@ once data exploration is concluded.
 Core Models
 ============
 
+Meridian implements two main data types which users will leverage: the `Record` and the `Dataset`. Naturally, a `Record` represents
+an individual row or record in your dataset, while a `Dataset` is a collection of `Record`s with a spatial index for efficient queries.
+
+Record
+^^^^^^^
+Create a custom `Record` to model your data by subclassing `meridian.Record` and adding
+annotations to the class. The simplest example of which has no annotations and therefore no attributes:
+
+.. code-block:: python
+
+	import meridian
+
+	class GeomOnly(meridian.Record):
+		pass
+
+`Record` objects have similar attributes to `NamedTuple`s and `pydantic` models, but "under the hood" they are essentially
+`NamedTuples` which always have at least one property called `geom` and implement protocols like `__geo_interface__`
+for compatibility. You can create a `Record` through direct instantiation or the `Record.from_geojson` classmethod:
+
+.. code-block:: python
+
+	from shapely import wkt
+
+	my_geom = wkt.loads("POINT(0, 0)")
+	empty1 = GeomOnly(my_geom)
+	empty2 = GeomOnly.from_geojson({'geometry': {'type': 'Point', 'coordinates': [0, 0]}, 'properties': {}})
+
+However, in most cases, we will want to define some attributes to go along with our data. We do this by
+adding annotations to our class definition:
+
+.. code-block:: python
+
+	import meridian
+
+	class PowerPlant(meridian.Record):
+		plant_code: int
+		plant_name: str
+		sector_name: str
+		primsource: str
+		install_mw: int
+		year_built: int = None
+
+Now, when we create `PowerPlant` objects, each of the annotated attributes will be available as a named property
+on the instantiated `Record`. When creating `Record`s, the types of incoming data *are not validated*, they are simply
+passed through to the instance. The hints are primarily for your use as the developer.
+
+When creating `Records` with annotations from geojson, the fields in the geojson's properties must match
+the names in the annotations. Only the fields which are annotated will be included, so this is a useful way to filter fields
+which are not needed.
+
+Modelling our data using classes has the advantage of allowing us to easily add custom behavior to
+
+
+
+
+.. _design
+
+Design Goals
+=============
+
+Some items which are important to me, in no particular order:
+ - Pythonicity. should be interoperable with standard library tools and be intuitive to use.
+ - Efficiency. Memory use is kept as low as possible and operations are optimized when appropriate.
+ - Type hinting wherever possible.
+ - Strong support for dataset attribution.
+
+
+Meridian's `Record` models draw strong inspiration from `pydantic`'s `BaseModel`, choosing to re-invent a small
+part of that wheel for the purpose of efficiency and narrowing of focus.
 
