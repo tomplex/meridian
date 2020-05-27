@@ -20,7 +20,8 @@
 import collections
 import operator
 import pathlib
-import typing
+
+from typing import Tuple, Dict, Any
 
 import fiona
 
@@ -28,10 +29,10 @@ from shapely.geometry import shape
 from shapely.geometry.base import BaseGeometry
 
 
-class Record(tuple):
+class Record(Tuple[Any]):
     __slots__ = ()
 
-    def __new__(cls, geom, *args, **kwargs):
+    def __new__(cls, geom: BaseGeometry, *args: Any, **kwargs: Any):
         """
         Create a new Record. keyword arguments should be supplied which match the user-defined
         annotation on the class.
@@ -49,7 +50,7 @@ class Record(tuple):
             return tuple.__new__(cls, (geom, *props))
         return tuple.__new__(cls, (geom,))
 
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs: Any) -> None:
         if not getattr(cls, "__annotations__", None):
             cls.__annotations__ = collections.OrderedDict()
         else:
@@ -61,7 +62,7 @@ class Record(tuple):
             setattr(cls, anno, property(operator.itemgetter(idx + 1)))
 
     @classmethod
-    def load_from(cls, src, **kwargs) -> "Dataset":
+    def load_from(cls, src: Any, **kwargs: Any) -> "Dataset":
         """
         Create a Dataset of the implemented model from a source, either
         a fiona-readable data file or iterable of geojson.
@@ -77,7 +78,7 @@ class Record(tuple):
         """
         from meridian import Dataset
 
-        if isinstance(src, list) or hasattr(src, '__next__'):
+        if isinstance(src, list) or hasattr(src, "__next__"):
             return Dataset((cls.from_geojson(gj) for gj in src))
         elif isinstance(src, (str, pathlib.Path)) and pathlib.Path(src).exists():
             with fiona.open(src, **kwargs) as collection:
@@ -86,7 +87,7 @@ class Record(tuple):
             raise Exception("One of path or geojson must be specified")
 
     @classmethod
-    def from_geojson(cls, geojson: dict):
+    def from_geojson(cls, geojson: Dict[str, Any]) -> "Record":
         """
         Create a new Record from a geojson-like dict.
 
@@ -104,7 +105,7 @@ class Record(tuple):
         return self[0]
 
     @property
-    def _geom(self):
+    def _geom(self) -> Any:
         """
         Adding _geom as a property allows a Record to interact seamlessly
         with shapely geometries. All methods on geometries use the _geom
@@ -115,7 +116,7 @@ class Record(tuple):
         return self.geom._geom
 
     @property
-    def __geo_interface__(self):
+    def __geo_interface__(self) -> Dict[str, Any]:
         """
         https://gist.github.com/sgillies/2217756
         """
@@ -128,7 +129,7 @@ class Record(tuple):
         }
 
     @property
-    def bounds(self):
+    def bounds(self) -> Tuple[float, float, float, float]:
         """
         The bounds of the Record's geometry, as a tuple like
         (xmin, ymin, xmax, ymax)
@@ -139,7 +140,7 @@ class Record(tuple):
         return self.geom.bounds
 
     @property
-    def geojson(self) -> typing.Dict[str, typing.Any]:
+    def geojson(self) -> Dict[str, Any]:
         """
         Get the record as geojson
 

@@ -1,4 +1,3 @@
-
 from test.conftest import make_point
 
 
@@ -43,7 +42,3 @@ def test_iter(dataset):
         i += 1
 
     assert i == len(dataset)
-
-
-def test_from_iterator():
-    i = ()

@@ -17,7 +17,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import functools
 import itertools
 import pickle
 import typing
@@ -34,11 +33,12 @@ T = TypeVar("T", bound=Record)
 
 class FastRTree(rtree.Rtree):
     """A faster Rtree which uses a lower protocol when pickling objects for storage."""
+
     def dumps(self, obj):
         return pickle.dumps(obj, -1)
 
 
-def _check_bounds(query):
+def _check_bounds(query: typing.Any):
     """Ensure the input object has a `bounds` attribute."""
     if not hasattr(query, "bounds"):
         raise AttributeError(
@@ -56,23 +56,18 @@ class Dataset(Generic[T]):
 
     def __init__(
         self,
-        data: typing.Union[typing.Sequence, typing.Iterable],
+        data: typing.Iterator[T],
         properties: rtree.index.Property = None,
     ):
-        if hasattr(data, "__next__"):
-            # It's an iterator
-            first = next(data)
-            # reconstruct our initial iterator by chaining
-            # the first item with the rest of the iterator
-            data = itertools.chain([first], data)
-        else:
-            # it's a sequence
-            first = data[0]
+        if not hasattr(data, "__next__"):
+            data = iter(data)
 
-        if not isinstance(first, Record):
+        peek = next(data)
+
+        if not isinstance(peek, Record):
             raise TypeError("Input must be an iterable of SpatialData objects")
 
-        self.__data = tuple(data)
+        self.__data = tuple(itertools.chain([peek], data))
 
         if properties is None:
             properties = rtree.index.Property()
@@ -83,7 +78,7 @@ class Dataset(Generic[T]):
         gen = ((idx, sd.bounds, None) for idx, sd in enumerate(self.__data))
         self.__rtree = FastRTree(gen, properties=properties)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Number of Records in the Dataset"""
         return len(self.__data)
 
@@ -96,7 +91,7 @@ class Dataset(Generic[T]):
         return self.__data[item]
 
     @property
-    def bounds(self):
+    def bounds(self) -> Tuple[float, float, float, float]:
         """
         The bounds of the Dataset.
 
@@ -147,7 +142,7 @@ class Dataset(Generic[T]):
             int
         """
         _check_bounds(query)
-        return self.__rtree.count(query.bounds)
+        return int(self.__rtree.count(query.bounds))
 
     def nearest(self, query, num_results=1) -> Tuple[T, ...]:
         """

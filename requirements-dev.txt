@@ -3,3 +3,4 @@ pytest-cov
 coverage
 black
 mypy
+flake8

@@ -1,13 +1,8 @@
-import typing
-
 import pytest
 
-from shapely.geometry import shape
+from shapely import geometry
 
 from meridian import Dataset, Record
-
-
-from shapely import geometry
 
 
 class TestRecord(Record):
@@ -18,14 +13,6 @@ class TestRecord(Record):
 
 class EmptyRecord(Record):
     pass
-
-
-def make_testrecord(geojson_geometry, feature_id=1, field1=None, field2=None):
-    """
-    Helper to create a spatialdata object given a geojson geometry and some other attributes.
-
-    """
-    return TestRecord(shape(geojson_geometry), id=feature_id, field1=field1, field2=field2)
 
 
 def make_square(xmin=0, ymin=0, delta=1, as_geom=False):
@@ -96,7 +83,13 @@ def dataset():
 
 @pytest.fixture()
 def record():
-    return make_testrecord(geojson_geometry=make_square(0, 0), feature_id=1)
+    return TestRecord.from_geojson({
+        "geometry": make_square(0, 0),
+        "properties": {
+            "id": 1,
+            "field1": None
+        }
+    })
 
 
 @pytest.fixture()
