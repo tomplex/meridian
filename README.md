@@ -21,7 +21,6 @@ optimized or ergonomic for operations like finding specific records, though this
 do with a filter. Also, if your data is highly mutable, e.g. you want to modify records in place, then
 you should probably look elsewhere.
 
----
 
 ### When should I use Meridian?
 
