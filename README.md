@@ -1,6 +1,9 @@
 # meridian
 
-[![PyPI version](https://badge.fury.io/py/meridian.svg)](https://badge.fury.io/py/meridian)
+[![PyPI version](https://badge.fury.io/py/meridian.svg)](https://badge.fury.io/py/meridian) 
+[![Documentation Status](https://readthedocs.org/projects/meridian/badge/?version=latest)](https://meridian.readthedocs.io/en/latest/?badge=latest)
+[![Coverage Status](https://coveralls.io/repos/github/tomplex/meridian/badge.svg?branch=master)](https://coveralls.io/github/tomplex/meridian?branch=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Performant geospatial data processing in Python's language.
 
