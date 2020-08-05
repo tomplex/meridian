@@ -12,7 +12,7 @@ Geospatial data and processes which deal with it have a good bit of jargon assoc
 jargon is heavily influenced by the relational database environment in which many people manipulate spatial data. When
 you try to describe to someone the process by which you relate one dataset to another, matching records from each
 where geometries intersect, the word that naturally comes to mind is a *spatial join*. This terminology is even present
-in most desktop GIS applications, making it a very common mental model for processing these kids of data.
+in most desktop GIS applications, making it a very common mental model for processing these kinds of data.
 
 Often times, I find that tools and libraries try to make Python fit into the world of spatial joins and relational
 databases, and while there have been several *very* successful projects to do so, it has never felt right to me.
