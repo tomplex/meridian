@@ -139,7 +139,25 @@ TO BE FILLED IN:
 
 # Installation
 
-`meridian` requires GEOS (for the `shapely` library) and [`libspatialindex`](https://libspatialindex.github.io/) to create the spatial index used for querying. On most systems, `libspatialindex` must be compiled from source. These instructions should work on Linux & macOS:
+`meridian` requires GEOS (for the `shapely` library), GDAL/OGR for reading data formats, and `Rtree`/[`libspatialindex`](https://libspatialindex.github.io/) 
+to create the spatial index used for querying. 
+
+Rtree does not have wheels and this the `libspatialindex` library must be installed independently. Installation info can be found
+[here](https://libspatialindex.org/#download). 
+
+On Ubuntu you can use apt:
+
+```bash
+apt install -y libspatialindex-dev
+```
+
+Arch:
+
+```bash
+pacman -Syu spatialindex
+```
+
+On most systems, `libspatialindex` can be compiled from source. These instructions should work on Linux & macOS:
 
 ```bash
 wget -qO- http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.gz | tar xz -C /tmp
@@ -147,6 +165,7 @@ cd /tmp/spatialindex-src-1.8.5 && ./configure; make; make install
 ```
 
 On Linux, you might need to run `ldconfig` afterwards to ensure that the `rtree` python library can find the library correctly.
+
 
 From `pypi`:
 
