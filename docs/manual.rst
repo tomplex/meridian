@@ -5,8 +5,6 @@ Meridian User Manual
 =======================
 
 
-.. _intro:
-
 Introduction
 ============
 
@@ -54,9 +52,9 @@ once data exploration is concluded.
 Core Models
 ============
 
-Meridian implements two main data types which users will leverage: the `Record` and the `Dataset`. Naturally, a `Record`
-represents an individual row or record in your dataset, while a `Dataset` is a collection of `Record`s with a spatial
-index for efficient queries.
+Meridian implements two main data types which users will leverage: the `Record` and the `Dataset`. Naturally,
+a `Record` represents an individual row or record in your dataset, while a `Dataset` is a collection of `Record`
+with a spatial index for efficient queries.
 
 Record
 ^^^^^^^
@@ -128,10 +126,7 @@ to our data:
 			return self.total_mw / self.install_mw * 100
 
 
-
-
-
-.. _design
+.. _design:
 
 Design Goals
 =============
@@ -147,10 +142,10 @@ Meridian's `Record` models draw strong inspiration from `pydantic`'s `BaseModel`
 part of that wheel for the purpose of efficiency and narrowing of focus.
 
 
-.. _benchmarks
+.. _benchmarks:
 
 Benchmarks
 ===========
 
 A dataset opened with Meridian can use up to half as much memory as the same dataset in GeoPandas,
-depending on the characteristics of the geometry.
+depending on the characteristics of the geometry. Oh yeah? Prove it!
