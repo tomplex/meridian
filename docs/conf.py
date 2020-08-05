@@ -33,7 +33,7 @@ extensions = [
     # 'sphinx.ext.mathjax',
 ]
 
-autodoc_mock_imports = ["rtree"]
+autodoc_mock_imports = ["rtree", "shapely", "fiona"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
