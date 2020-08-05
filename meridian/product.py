@@ -24,7 +24,7 @@ def product(
     d1: Dataset[_T], d2: Dataset[_U], predicate: str = "intersects"
 ) -> Iterator[Tuple[_T, _U]]:
     """
-    product is returns an iterator of Record tuples which fulfill the chosen predicate.
+    product returns an iterator of Record tuples which fulfill the chosen predicate.
     Behavior is similar to itertools.product, except that it is not a full cartestian product;
     The tuples first item will match the first Dataset's Record type, and the second will
     match the second.

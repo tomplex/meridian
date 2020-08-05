@@ -55,9 +55,7 @@ class Dataset(Generic[T]):
     """
 
     def __init__(
-        self,
-        data: typing.Iterator[T],
-        properties: rtree.index.Property = None,
+        self, data: typing.Iterator[T], properties: rtree.index.Property = None,
     ):
         if not hasattr(data, "__next__"):
             data = iter(data)

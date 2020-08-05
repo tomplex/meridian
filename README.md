@@ -4,13 +4,11 @@
 
 Performant geospatial data processing in Python's language.
 
-Meridian lets you treat your geospatial dataset like you would a normal Python data structure, backed with a 
-spatial index for high-performance geospatial queries. All data is stored in tuple-like objects, which makes it 
-very memory-efficient. A dataset opened with Meridian can use up to half as much memory as the same 
-dataset in GeoPandas, depending on the characteristics of the geometry. 
+Meridian lets you treat your geospatial dataset like you would any other Python data structure, but it is backed 
+with a spatial index for fast spatial queries. All data is stored in tuple-like objects, 
+which makes it very memory-efficient. 
 
 ### Note: this library is still in alpha. The API and functionality will change often and without notice.
-
 
 ## Usage
 
@@ -18,14 +16,13 @@ dataset in GeoPandas, depending on the characteristics of the geometry.
 
 Meridian is not meant to be a replacement for a database system, and as such it's not particularly 
 optimized or ergonomic for operations like finding specific records, though this is pretty easy to 
-do with a filter. Also, if your data is highly mutable, e.g. you want to modify records in place, then
+do with a filter. If your data is highly mutable, e.g. you want to modify records in place, then
 you should probably look elsewhere.
-
----
 
 ### When should I use Meridian?
 
-Meridian shines when you have some reference dataset that you want to compare to an input dataset or single record.
+Meridian shines when you want to perform many spatial operations on multiple datasets to find records which satisfy
+some spatial predicate.
 
 Meridian expects that you have a decent understanding of the data which you would like to work with. It requires
 you to define an annotated model class which lists the attributes of the dataset which you want to work with. 

@@ -10,7 +10,7 @@ Meridian User Manual
 Introduction
 ============
 
-Geospatial data and processes which deal with it have a rather significant bit of jargon associated with them, and that
+Geospatial data and processes which deal with it have a good bit of jargon associated with them, and that
 jargon is heavily influenced by the relational database environment in which many people manipulate spatial data. When
 you try to describe to someone the process by which you relate one dataset to another, matching records from each
 where geometries intersect, the word that naturally comes to mind is a *spatial join*. This terminology is even present
@@ -43,7 +43,7 @@ libraries built around manipulating it (like `itertools`) and is well known to u
 things in the language of Python, instead of the language of relational databases.
 
 Meridian, at its core, is trying to make bring these concepts for geospatial data processing into common Python idioms,
-so you can use familiar terminologies, tools, and mental models when you're dealing with it.
+so you can use familiar terminologies, tools, and mental models when you're dealing with this domain.
 
 Meridian is not trying to displace a tool like Geopandas, which is excellent for exploring and understanding datasets.
 Instead, Meridian wants to be an efficient option for intensive and repeated geospatial processing applications
@@ -54,8 +54,9 @@ once data exploration is concluded.
 Core Models
 ============
 
-Meridian implements two main data types which users will leverage: the `Record` and the `Dataset`. Naturally, a `Record` represents
-an individual row or record in your dataset, while a `Dataset` is a collection of `Record`s with a spatial index for efficient queries.
+Meridian implements two main data types which users will leverage: the `Record` and the `Dataset`. Naturally, a `Record`
+represents an individual row or record in your dataset, while a `Dataset` is a collection of `Record`s with a spatial
+index for efficient queries.
 
 Record
 ^^^^^^^
@@ -64,47 +65,68 @@ annotations to the class. The simplest example of which has no annotations and t
 
 .. code-block:: python
 
-	import meridian
+    import meridian
 
-	class GeomOnly(meridian.Record):
-		pass
+    class GeomOnly(meridian.Record):
+        pass
 
 `Record` objects have similar attributes to `NamedTuple`s and `pydantic` models, but "under the hood" they are essentially
-`NamedTuples` which always have at least one property called `geom` and implement protocols like `__geo_interface__`
+`NamedTuples` which always have at least one property called `geom` and implement e.g. the `__geo_interface__` protocol
 for compatibility. You can create a `Record` through direct instantiation or the `Record.from_geojson` classmethod:
 
 .. code-block:: python
 
-	from shapely import wkt
+    from shapely import wkt
 
-	my_geom = wkt.loads("POINT(0, 0)")
-	empty1 = GeomOnly(my_geom)
-	empty2 = GeomOnly.from_geojson({'geometry': {'type': 'Point', 'coordinates': [0, 0]}, 'properties': {}})
+    my_geom = wkt.loads("POINT(0 0)")
+    empty1 = GeomOnly(my_geom)
+    empty2 = GeomOnly.from_geojson({'geometry': {'type': 'Point', 'coordinates': [0, 0]}, 'properties': {}})
+
+    print(empty1.geom.wkt)
+    'POINT(0 0)'
 
 However, in most cases, we will want to define some attributes to go along with our data. We do this by
 adding annotations to our class definition:
 
 .. code-block:: python
 
-	import meridian
+    import meridian
 
-	class PowerPlant(meridian.Record):
-		plant_code: int
-		plant_name: str
-		sector_name: str
-		primsource: str
-		install_mw: int
-		year_built: int = None
+    class PowerPlant(meridian.Record):
+        plant_code: int
+        plant_name: str
+        sector_name: str
+        primsource: str
+        install_mw: float
+        total_mw: float
+        year_built: int = -1
 
 Now, when we create `PowerPlant` objects, each of the annotated attributes will be available as a named property
 on the instantiated `Record`. When creating `Record`s, the types of incoming data *are not validated*, they are simply
-passed through to the instance. The hints are primarily for your use as the developer.
+passed through to the instance. The hints are primarily for your use as the developer. You can specify defaults for any
+field, otherwise they will default to `None`.
 
-When creating `Records` with annotations from geojson, the fields in the geojson's properties must match
-the names in the annotations. Only the fields which are annotated will be included, so this is a useful way to filter fields
-which are not needed.
+When creating `Records` with annotations from geojson, the fields in the geojson's `properties` must match
+the names in the annotations. Only the fields which are annotated on the class will be used, so this is a useful way
+to filter fields which are not needed. If you are instantiating a `Record` directly, then the geometry must be the
+first argument, and all attributes must be passed in as kwargs so they are named explicitly.
 
-Modelling our data using classes has the advantage of allowing us to easily add custom behavior to
+Modelling our data using classes has the advantage of allowing us to easily add custom behavior or derived attributes
+to our data:
+
+.. code-block:: python
+
+    import meridian
+
+    class PowerPlant(meridian.Record):
+        install_mw: float
+        total_mw: float
+
+		@property
+		def capacity_factor(self) -> float:
+			"""https://en.wikipedia.org/wiki/Capacity_factor"""
+			return self.total_mw / self.install_mw * 100
+
 
 
 
@@ -124,3 +146,11 @@ Some items which are important to me, in no particular order:
 Meridian's `Record` models draw strong inspiration from `pydantic`'s `BaseModel`, choosing to re-invent a small
 part of that wheel for the purpose of efficiency and narrowing of focus.
 
+
+.. _benchmarks
+
+Benchmarks
+===========
+
+A dataset opened with Meridian can use up to half as much memory as the same dataset in GeoPandas,
+depending on the characteristics of the geometry.

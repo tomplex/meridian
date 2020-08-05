@@ -8,7 +8,7 @@ from meridian import Dataset, Record
 class TestRecord(Record):
     id: int
     field1: str
-    field2: str = 'default'
+    field2: str = "default"
 
 
 class EmptyRecord(Record):
@@ -83,18 +83,11 @@ def dataset():
 
 @pytest.fixture()
 def record():
-    return TestRecord.from_geojson({
-        "geometry": make_square(0, 0),
-        "properties": {
-            "id": 1,
-            "field1": None
-        }
-    })
+    return TestRecord.from_geojson(
+        {"geometry": make_square(0, 0), "properties": {"id": 1, "field1": None}}
+    )
 
 
 @pytest.fixture()
 def empty_record():
-    return EmptyRecord.from_geojson({
-        'geometry': make_point(0, 0),
-        'properties': {}
-    })
+    return EmptyRecord.from_geojson({"geometry": make_point(0, 0), "properties": {}})
