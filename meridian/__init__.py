@@ -19,6 +19,6 @@
 # SOFTWARE.
 from meridian.dataset import Dataset
 from meridian.record import Record
-from meridian.product import intersection, product
+from meridian.product import Product, intersection, product
 
-__all__ = ["Dataset", "Record", "intersection", "product"]
+__all__ = ["Dataset", "Record", "Product", "intersection", "product"]
